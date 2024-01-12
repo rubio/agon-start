@@ -48,6 +48,10 @@ And from MOS 1.03:
 - Pressing the UP arrow key when the buffer is empty will retrieve the last entered command
 - Pressing CTRL+N will switch to paged mode, CTRL+O will switch it off. Screen will pause after scrolling a page. Press SHIFT to continue, or ESC to break out. Paged mode should work with any application including BBC BASIC.
 
+And from MOS 1.04:
+
+- Pressing UP and DOWN arrow keys will page through the command history
+
 ## Soft Boot
 
 Press CTRL+ALT+DEL to soft-boot the Z80 (CTRL+SHIFT+ESC for MOS 1.02 or earlier)
@@ -86,6 +90,14 @@ Syntax:`*CD path`
 
 Change current directory
 
+### CLS
+
+Syntax: `*CLS`
+
+Clear the screen
+
+NB: Requires MOS 1.04 RC3 or greater
+
 ### COPY
 
 Syntax: `*COPY filename1 filename2`
@@ -108,6 +120,15 @@ Syntax: `*DELETE filename` (Aliases include `ERASE`)
 
 Delete a file or folder (must be empty). 
 
+### HELP
+
+Syntax: `*HELP <command>`
+
+- Display a list of commands if <command> is not specified
+- Displays help for a MOS command if <command> is specified
+
+NB: Requires MOS 1.04 RC3 or greater
+
 ### JMP
 
 Syntax:`*JMP addr`: Jump to the specified address in memory
@@ -123,6 +144,12 @@ Load a file from the SD card to the specified address. If no parameters are pass
 Syntax: `*MKDIR filename`
 
 Create a new folder on the SD card
+
+### MOUNT
+
+Syntax: `*MOUNT`
+
+Remount the MicroSD card - required if you reinsert it without rebooting
 
 ### RENAME
 
@@ -156,9 +183,10 @@ Syntax: `*SET option value`
 
 Set a system option
 
-#### Keyboard Layout
+- `*SET KEYBOARD n`: Set the keyboard layout
+- `*SET CONSOLE n`: Set the console mode
 
-`*SET KEYBOARD n`: Set the keyboard layout
+#### Keyboard Layouts
 
 - 0: UK
 - 1: US
@@ -172,6 +200,22 @@ Set a system option
 
 NB: Keyboard layouts 2 to 8 are only available in MOS 1.03
 
+#### Console Mode
+
+The USB cable to the Agon also provides two-way serial comms; this is how the Arduino IDE programs it. This serial connection can also be used to send data to and from the Agon.
+
+When console mode is on, all character output and keyboard input is echoed to this serial port.
+
+Use case scenarios:
+
+- Keyboardless operation - you can place a command to switch it on in the autoexec.txt file.
+- Using the ZDI debugger - pressing CTRL+Z when in console mode switches on the ZDI debugger (more details to follow).
+
+- 0: Console mode is off (default)
+- 1: Console mode is on
+
+NB: It is pretty dumb, and does not play nicely with the line editor.
+
 ### TIME
 
 Syntax:
@@ -181,6 +225,14 @@ Syntax:
 Set and read the ESP32 real-time clock
 
 NB: Requires MOS 1.03 or greater
+
+### TYPE
+
+Syntax: `*TYPE <filename>`
+
+Display the contents of a file on screen
+
+NB: Requires MOS 1.04 RC3 or greater
 
 ### VDU
 

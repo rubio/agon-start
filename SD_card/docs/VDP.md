@@ -102,33 +102,6 @@ NB:
 
 - `VDU 23, 16, setting, mask`: Specify [cursor behaviour](#cursor-behaviour) by ANDing with mask then XORing with setting
 
-## VDU 23, 27: Sprites and Bitmaps
-
-VDU 23, 27 is reserved for the bitmap and sprite functionality
-
-### Bitmaps
-
-- `VDU 23, 27, 0, n`: Select bitmap n
-- `VDU 23, 27, 1, w; h; b1, b2 ... bn`: Load colour bitmap data into current bitmap
-- `VDU 23, 27, 2, w; h; col1; col2; b1, b2 ... bn`: Load monochrome bitmap data into current bitmap
-- `VDU 23, 27, 3, x; y;`: Draw current bitmap on screen at pixel position x, y
-
-### Sprites
-
-- `VDU 23, 27, 4, n`: Select sprite n
-- `VDU 23, 27, 5`: Clear frames in current sprite
-- `VDU 23, 27, 6, n`: Add bitmap n as a frame to current sprite
-- `VDU 23, 27, 7, n`: Activate n sprites
-- `VDU 23, 27, 8`: Select next frame of current sprite
-- `VDU 23, 27, 9`: Select previous frame of current sprite
-- `VDU 23, 27, 10, n`: Select the nth frame of current sprite
-- `VDU 23, 27, 11`: Show current sprite
-- `VDU 23, 27, 12`: Hide current sprite
-- `VDU 23, 27, 13, x; y;`: Move current sprite to pixel position x, y
-- `VDU 23, 27, 14, x; y;`: Move current sprite by x, y pixels
-- `VDU 23, 27, 15`: Update the sprites in the GPU
-- `VDU 23, 27, 16`: Reset the sprites and clear all data (Requires MOS 1.03 or above)
-
 ## Serial Protocol
 
 Data sent from the VPD to the eZ80's UART0 is sent as a packet in the following format:
@@ -186,8 +159,6 @@ The following bits are implemented in VDU 23, 16
 
 ## Screen Modes
 
-Modes over 128 are double-buffered
-
 ### Prior to Version 1.04
 
 | Mode | Horz | Vert | Cols | Refresh |
@@ -208,6 +179,7 @@ Modes over 128 are double-buffered
 |    4 |  640 |  240 |   16 |    60hz |
 |    5 |  640 |  240 |    4 |    60hz |
 |    6 |  640 |  240 |    2 |    60hz |
+|  ¹ 7 |  640 |  480 |   16 |    60hz |
 |    8 |  320 |  240 |   64 |    60hz |
 |    9 |  320 |  240 |   16 |    60hz |
 |   10 |  320 |  240 |    4 |    60hz |
@@ -232,4 +204,9 @@ Modes over 128 are double-buffered
 |  141 |  320 |  200 |   16 |    70hz |
 |  142 |  320 |  200 |    4 |    70hz |
 |  143 |  320 |  200 |    2 |    70hz |
+
+NB:
+
+1. Mode 7 is an emulation of the BBC Micro 'Teletext' mode - a 40x25 character mapped display with inline control codes for colour and graphics effects. This is available from 1.04 RC3.
+2. Modes over 128 are double-buffered.
 

@@ -6,28 +6,62 @@ As an aside, R.T.Russell still supports BBC Basic, and has ported it for a numbe
 
 BBC BASIC for Agon is a port of his BBC BASIC for Z80, which is now open source, with a number of modifications to make it run on Agon.
 
-# Implementation on the Agon Light
+If you are not familiar with the BASIC programming language, or need a refresher on BBC BASIC, please refer to the [official BBC BASIC for Agon documentation here](https://oldpatientsea.github.io/agon-bbc-basic-manual/0.1/index.html).
+
+# Implementations on the Agon Light
+
+There are now two versions of BBC BASIC for the Agon
+
+## BBC BASIC for Z80
 
 BBC BASIC for Z80 runs in Z80 mode, that is within a 64K segment. The interpreter takes around 16K of RAM, leaving around 48K available for user programs and data.
 
-If you are not familiar with the BASIC programming language, or need a refresher on BBC BASIC, please refer to the [official BBC BASIC for Agon documentation here](https://oldpatientsea.github.io/agon-bbc-basic-manual/0.1/index.html).
+You can download this version from [here](https://github.com/breakintoprogram/agon-bbc-basic/releases)
 
-To run, load into memory and run as follows:
+## BBC BASIC for eZ80
+
+BBC BASIC for eZ80 runs in ADL mode and has full access to the Agon RAM without paging. The interpreter takes around 19K of RAM, leaving around 440K available for user programs and data
+
+You can download this version from [here](https://github.com/breakintoprogram/agon-bbc-basic-adl/releases)
+
+## Loading and Running
+
+Make sure that the BASIC binary files are copied to the root of your Agon SD card.
+
+To distinguish them, use the names:
+
+- `bbcbasic16.bin` for the Z80 version
+- `bbcbasic24.bin` for the eZ80 version
+
+To run, load the required version into memory and run, for example:
 
 ```
-LOAD bbcbasic.bin
+LOAD bbcbasic24.bin
 RUN
 ```
 
 It is possible to automatically CHAIN (load and run) a BBC BASIC program by passing the filename as a parameter:
 ```
-LOAD bbcbasic.bin
+LOAD bbcbasic24.bin
 RUN . /path/to/file.bas
 ```
 
-Note that passing a . as the first parameter of RUN is informing MOS to use the default value there (&40000)
+NB:
 
-BBC BASIC needs a full 64K segment, so cannot be run from the MOS folder as a star command.
+- BBC BASIC cannot be run from the MOS folder as a star command
+- Passing a . as the first parameter of RUN is informing MOS to use the default value (&40000)
+
+## Checking which version is running
+
+To programatically check which version is running, use the system variable HIMEM
+
+```
+10 IF HIMEM >= &FFFF THEN EZ80%=1 ELSE EZ80%=0
+```
+
+HIMEM is the last physical byte of RAM available to BASIC. On the Z80 version this cannot be greater than &FFFF (65535) as it can only address the 64K segment it is running in. The eZ80 version on the other hand will return a 24-bit address.
+
+This snippet will set the variable EZ80% to 1 for the eZ80 version, or 0 for the Z80 version.
 
 # Summary of Agon Light Specific Changes
 
@@ -201,11 +235,8 @@ The VDU commands on the Agon Light will be familiar to those who have coded on A
 
 BBC BASIC for Z80, like its 6502 counterpart, includes an inline assembler. For instructions on usage, please refer to the [original documentation](https://www.bbcbasic.co.uk/bbcbasic/mancpm/bbc3.html#introduction).
 
-In addition to the standard set of Z80 instructions, the following eZ80 instructions have been added
-
-- `MLT`
-
-The assembler will only compile 8-bit Z80 code and there are currently no plans for extending the instruction set much further in this version.
+- The Z80 version assembles more or less stock Z80.
+- The eZ80 version has been extended to include extra instructions and addressing modes.
 
 ## Integration with MOS
 

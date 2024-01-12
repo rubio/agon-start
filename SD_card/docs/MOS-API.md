@@ -183,7 +183,7 @@ Rename a file on the SD card
 Parameters: 
 
 - HL(U): Address of filename1 (zero terminated)
-- D(E)U: Address of filename2 (zero terminated)
+- DE(U): Address of filename2 (zero terminated)
 
 Returns:
 
@@ -478,6 +478,71 @@ Returns:
 
 - A: FRESULT
 
+### 0x1D: mos_setkbvector
+
+Set a vector (callback routine address) into the VDP keyboard packet receiver in MOS (Requires MOS 1.04 RC2 or greater)
+
+Parameters:
+
+- C: If non-zero then set the top byte of HLU (the callback address) to MB (for when ADL=0)
+- HLU: Pointer to the callback routine
+
+Returns:
+
+- HLU: Value of previous vector (so that routines can be chained)
+
+### 0x1E: mos_getkbmap
+
+Fetch a pointer to the virtual keyboard map (Requires MOS 1.04 RC2 or above)
+
+Parameters: None
+
+Returns:
+
+- IXU: Pointer to the keyboard bitmap (this is always 24 bit)
+
+### 0x1F: mos_i2c_open
+
+Open the I2C bus as Master (Requires MOS 1.04 RC3 or above)
+
+Parameters:
+
+- C: Frequency ID
+
+Returns: None
+
+### 0x20: mos_i2c_close
+
+Close the I2C bus (Requires MOS 1.04 RC3 or above)
+
+Parameters: None
+
+Returns: None
+
+### 0x21: mos_i2c_write
+
+Write a block of bytes to the I2C bus (Requires MOS 1.04 RC3 or above)
+
+Parameters:
+
+- C: I2C Address
+- B: Number of bytes to write (maximum 32)
+- HL(U): Pointer to a buffer to read the bytes from
+
+Returns: None
+
+### 0x22: mos_i2c_read
+
+Read a block of bytes from the I2C bus (Requires MOS 1.04 RC3 or above)
+
+Parameters:
+
+- C: I2C Address
+- B: Number of bytes to read (maximum 32)
+- HL(U): Pointer to a buffer to write the bytes to
+
+Returns: None
+
 ***
 
 ## FatFS commands
@@ -632,52 +697,4 @@ Example:
 filename:		DB	"example.txt", 0		; The file to read
 
 filinfo:		DS	FILINFO_SIZE			; FILINFO buffer (defined in mos_api.inc)
-```
-
-***
-
-## System Variables
-
-The MOS API command [mos_sysvars](#0x08-mos_sysvars) returns a pointer to the base of the MOS system variables area in IXU - a 24-bit pointer.
-
-The following system variables are available in [mos_api.inc](#usage-from-z80-assembler):
-
-```
-; System variable indexes for api_sysvars
-; Index into _sysvars in globals.asm
-;
-sysvar_time:		EQU	00h	; 4: Clock timer in centiseconds (incremented by 2 every VBLANK)
-sysvar_vpd_pflags:	EQU	04h	; 1: Flags to indicate completion of VDP commands
-sysvar_keyascii:	EQU	05h	; 1: ASCII keycode, or 0 if no key is pressed
-sysvar_keymods:		EQU	06h	; 1: Keycode modifiers
-sysvar_cursorX:		EQU	07h	; 1: Cursor X position
-sysvar_cursorY:		EQU	08h	; 1: Cursor Y position
-sysvar_scrchar:		EQU	09h	; 1: Character read from screen
-sysvar_scrpixel:	EQU	0Ah	; 3: Pixel data read from screen (R,B,G)
-sysvar_audioChannel:	EQU	0Dh	; 1: Audio channel 
-sysvar_audioSuccess:	EQU	0Eh	; 1: Audio channel note queued (0 = no, 1 = yes)
-sysvar_scrWidth:	EQU	0Fh	; 2: Screen width in pixels
-sysvar_scrHeight:	EQU	11h	; 2: Screen height in pixels
-sysvar_scrCols:		EQU	13h	; 1: Screen columns in characters
-sysvar_scrRows:		EQU	14h	; 1: Screen rows in characters
-sysvar_scrColours:	EQU	15h	; 1: Number of colours displayed
-sysvar_scrpixelIndex:	EQU	16h	; 1: Index of pixel data read from screen
-sysvar_vkeycode:	EQU	17h	; 1: Virtual key code from FabGL
-sysvar_vkeydown		EQU	18h	; 1: Virtual key state from FabGL (0=up, 1=down)
-sysvar_vkeycount:	EQU	19h	; 1: Incremented every time a key packet is received
-sysvar_rtc:		EQU	1Ah	; 8: Real time clock data
-sysvar_keydelay:	EQU	22h	; 2: Keyboard repeat delay
-sysvar_keyrate:		EQU	24h	; 2: Keyboard repeat rate
-sysvar_keyled:		EQU	26h	; 1: Keyboard LED status
-sysvar_scrMode:		EQU	27h	; 1: Screen mode (from MOS 1.04)
-```
-Example: Reading a virtual keycode in ADL mode (24-bit):
-```
-		MOSCALL	mos_getkey
-		LD	A, (IX + sysvar_vkeycode)	; Load A with the virtual keycode from FabGL
-```
-Example: Reading a virtual keycode in Z80 mode (16-bit):
-```
-		MOSCALL	mos_getkey
-		LD.LIL	A, (IX + sysvar_vkeycode)	; Load A with the virtual keycode from FabGL
 ```

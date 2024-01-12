@@ -1,6 +1,3 @@
-VDP Enhanced Audio API
-======================
-
 **NB: This is implemented in VDP versions 1.04 and above.**
 
 The Agon-VDP supports audio commands via `VDU 23,0,&85`, followed by further data to give the exact command required.
